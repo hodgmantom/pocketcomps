@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/router';
 
 export default function AdminLogin() {
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
   const router = useRouter();
@@ -9,13 +10,15 @@ export default function AdminLogin() {
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
 
+    const correctUsername = 'admin';
     const correctPassword = 'Lolarose2019&';
 
-    if (password === correctPassword) {
+    if (username === correctUsername && password === correctPassword) {
       localStorage.setItem('admin-auth', 'true');
+      localStorage.setItem('admin-user', username);
       router.push('/admin');
     } else {
-      setError('Incorrect password');
+      setError('Incorrect username or password');
     }
   };
 
@@ -25,11 +28,20 @@ export default function AdminLogin() {
         <h1 style={styles.title}>Admin Login</h1>
         <form onSubmit={handleLogin}>
           <input
+            type="text"
+            placeholder="Username"
+            value={username}
+            onChange={e => setUsername(e.target.value)}
+            style={styles.input}
+            required
+          />
+          <input
             type="password"
-            placeholder="Enter password"
+            placeholder="Password"
             value={password}
             onChange={e => setPassword(e.target.value)}
             style={styles.input}
+            required
           />
           <button type="submit" style={styles.button}>Login</button>
           {error && <p style={styles.error}>{error}</p>}
