@@ -16,7 +16,7 @@ export default function AdminLogin() {
     if (username === correctUsername && password === correctPassword) {
       localStorage.setItem('admin-auth', 'true');
       localStorage.setItem('admin-user', username);
-      router.push('/admin');
+      router.push('/admin/dashboard');
     } else {
       setError('Incorrect username or password');
     }
