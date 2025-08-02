@@ -24,8 +24,7 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
 
   return (
     <div style={styles.wrapper}>
-      {/* Sidebar */}
-      <aside style={styles.sidebar}>
+      <aside style={styles.sidebar} className="admin-sidebar">
         <h2 style={styles.logo}>PocketComps</h2>
         <nav style={styles.nav}>
           <Link href="/admin/dashboard" style={styles.link}>🏠 Dashboard</Link>
@@ -34,10 +33,17 @@ export default function AdminLayout({ children }: { children: ReactNode }) {
         </nav>
       </aside>
 
-      {/* Main content area */}
       <main style={styles.main}>
         {children}
       </main>
+
+      <style jsx global>{`
+        @media (max-width: 768px) {
+          .admin-sidebar {
+            display: none;
+          }
+        }
+      `}</style>
     </div>
   );
 }
@@ -47,6 +53,7 @@ const styles = {
     display: 'flex',
     minHeight: '100vh',
     fontFamily: 'sans-serif',
+    flexDirection: 'row' as const,
   },
   sidebar: {
     width: '220px',
@@ -56,6 +63,7 @@ const styles = {
     display: 'flex',
     flexDirection: 'column' as const,
     gap: '1.5rem',
+    transition: 'all 0.3s ease',
   },
   logo: {
     fontSize: '1.5rem',

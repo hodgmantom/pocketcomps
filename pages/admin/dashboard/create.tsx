@@ -14,6 +14,7 @@ export default function CreateCompetitionPage() {
   const [tickets, setTickets] = useState(0);
   const [price, setPrice] = useState(0);
   const [drawDate, setDrawDate] = useState('');
+  const [drawTime, setDrawTime] = useState('');
 
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -54,7 +55,7 @@ export default function CreateCompetitionPage() {
       correctAnswer: answerOptions[correctAnswerIndex ?? 0],
       tickets,
       price,
-      drawDate,
+      drawDate: `${drawDate}T${drawTime}`,
     };
 
     const existing = JSON.parse(localStorage.getItem('competitions') || '[]');
@@ -98,7 +99,7 @@ export default function CreateCompetitionPage() {
 
             {image && (
               <div style={styles.imagePreview}>
-                <img src={image} alt="Preview" />
+                <img src={image} alt="Preview" style={{ width: '100%', height: 'auto' }} />
               </div>
             )}
 
@@ -139,35 +140,39 @@ export default function CreateCompetitionPage() {
               </div>
             ))}
 
-            <div style={styles.row}>
-              <div style={{ flex: 1 }}>
-                <label style={styles.label}>Total Tickets</label>
-                <input
-                  style={styles.input}
-                  type="number"
-                  value={tickets}
-                  onChange={(e) => setTickets(Number(e.target.value))}
-                  required
-                />
-              </div>
-              <div style={{ flex: 1, marginLeft: '1rem' }}>
-                <label style={styles.label}>Price per Ticket (£)</label>
-                <input
-                  style={styles.input}
-                  type="number"
-                  value={price}
-                  onChange={(e) => setPrice(Number(e.target.value))}
-                  required
-                />
-              </div>
-            </div>
-
-            <label style={styles.label}>Draw Date & Time</label>
+            <label style={styles.label}>Total Tickets</label>
             <input
               style={styles.input}
-              type="datetime-local"
+              type="number"
+              value={tickets}
+              onChange={(e) => setTickets(Number(e.target.value))}
+              required
+            />
+
+            <label style={styles.label}>Price per Ticket (£)</label>
+            <input
+              style={styles.input}
+              type="number"
+              value={price}
+              onChange={(e) => setPrice(Number(e.target.value))}
+              required
+            />
+
+            <label style={styles.label}>Draw Date</label>
+            <input
+              style={styles.input}
+              type="date"
               value={drawDate}
               onChange={(e) => setDrawDate(e.target.value)}
+              required
+            />
+
+            <label style={styles.label}>Draw Time</label>
+            <input
+              style={styles.input}
+              type="time"
+              value={drawTime}
+              onChange={(e) => setDrawTime(e.target.value)}
               required
             />
 
@@ -181,13 +186,13 @@ export default function CreateCompetitionPage() {
 
 const styles = {
   container: {
-    padding: '2rem',
+    padding: '1rem',
     backgroundColor: '#f0f2f5',
     minHeight: '100vh',
   },
   card: {
     backgroundColor: '#fff',
-    padding: '2rem',
+    padding: '1rem',
     borderRadius: '12px',
     boxShadow: '0 6px 16px rgba(0, 0, 0, 0.1)',
     maxWidth: '700px',
@@ -213,6 +218,7 @@ const styles = {
     borderRadius: '6px',
     border: '1px solid #ccc',
     fontSize: '1rem',
+    width: '100%',
   },
   inputFile: {
     padding: '0.5rem 0',
@@ -223,10 +229,6 @@ const styles = {
     overflow: 'hidden',
     maxHeight: '300px',
     boxShadow: '0 2px 8px rgba(0,0,0,0.1)',
-  },
-  row: {
-    display: 'flex',
-    gap: '1rem',
   },
   button: {
     backgroundColor: '#1890ff',
@@ -244,6 +246,7 @@ const styles = {
     alignItems: 'center',
     gap: '1rem',
     marginBottom: '0.5rem',
+    flexWrap: 'wrap' as const,
   },
   radioLabel: {
     display: 'flex',

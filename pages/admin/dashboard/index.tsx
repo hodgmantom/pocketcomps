@@ -3,7 +3,7 @@ import AdminLayout from '@/components/AdminLayout';
 import AdminHeader from '@/components/AdminHeader';
 import Link from 'next/link';
 
-// ✅ Define a proper Competition type
+// Type definition for better type safety
 type Competition = {
   title: string;
   image: string;
@@ -19,7 +19,7 @@ export default function DashboardPage() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
 
   useEffect(() => {
-    const saved: Competition[] = JSON.parse(localStorage.getItem('competitions') || '[]');
+    const saved = JSON.parse(localStorage.getItem('competitions') || '[]');
     setCompetitions(saved);
   }, []);
 
@@ -33,37 +33,28 @@ export default function DashboardPage() {
   };
 
   const isFinished = (drawDate: string) => {
-    const now = new Date();
+    const today = new Date();
     const draw = new Date(drawDate);
-    return draw <= now;
+    return draw <= today;
   };
 
+  // Stats
   const totalComps = competitions.length;
-  const totalValue = competitions.reduce((acc, comp) => acc + comp.price, 0);
-  const finishedCount = competitions.filter(c => isFinished(c.drawDate)).length;
-  const liveCount = totalComps - finishedCount;
+  const liveComps = competitions.filter(comp => !isFinished(comp.drawDate)).length;
+  const finishedComps = totalComps - liveComps;
+  const totalTickets = competitions.reduce((sum, comp) => sum + comp.tickets, 0);
+  const totalValue = competitions.reduce((sum, comp) => sum + comp.tickets * comp.price, 0);
 
   return (
     <AdminLayout>
       <AdminHeader title="Admin Dashboard" subtitle="Manage your competitions below." />
 
-      <div style={styles.statsRow}>
-        <div style={styles.statCard}>
-          <h3>Total Competitions</h3>
-          <p>{totalComps}</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>Live</h3>
-          <p>{liveCount}</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>Finished</h3>
-          <p>{finishedCount}</p>
-        </div>
-        <div style={styles.statCard}>
-          <h3>Total Value (£)</h3>
-          <p>£{totalValue}</p>
-        </div>
+      <div style={styles.statsGrid}>
+        <div style={styles.statCard}><strong>{totalComps}</strong><span>Total Competitions</span></div>
+        <div style={styles.statCard}><strong>{liveComps}</strong><span>Live Competitions</span></div>
+        <div style={styles.statCard}><strong>{finishedComps}</strong><span>Finished Competitions</span></div>
+        <div style={styles.statCard}><strong>{totalTickets}</strong><span>Total Tickets</span></div>
+        <div style={styles.statCard}><strong>£{totalValue.toFixed(2)}</strong><span>Estimated Value</span></div>
       </div>
 
       <div style={styles.buttonRow}>
@@ -113,19 +104,6 @@ export default function DashboardPage() {
 }
 
 const styles = {
-  statsRow: {
-    display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
-    gap: '1rem',
-    marginBottom: '2rem',
-  },
-  statCard: {
-    backgroundColor: '#fff',
-    padding: '1rem',
-    borderRadius: '8px',
-    textAlign: 'center' as const,
-    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
-  },
   list: {
     listStyle: 'none',
     padding: 0,
@@ -138,6 +116,7 @@ const styles = {
     borderRadius: '8px',
     padding: '1rem',
     display: 'flex',
+    flexWrap: 'wrap' as const,
     gap: '1rem',
     alignItems: 'center',
     boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
@@ -189,5 +168,22 @@ const styles = {
     color: '#fff',
     fontSize: '0.8rem',
     fontWeight: 'bold',
+  },
+  statsGrid: {
+    display: 'grid',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(160px, 1fr))',
+    gap: '1rem',
+    marginBottom: '2rem',
+  },
+  statCard: {
+    background: '#fff',
+    padding: '1rem',
+    borderRadius: '8px',
+    boxShadow: '0 2px 6px rgba(0,0,0,0.05)',
+    display: 'flex',
+    flexDirection: 'column' as const,
+    alignItems: 'center',
+    justifyContent: 'center',
+    textAlign: 'center' as const,
   },
 };
