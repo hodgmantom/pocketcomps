@@ -5,7 +5,7 @@ export default function Home() {
   return (
     <>
       <Head>
-        <title>PocketComps | Your Favourite Pokemon Giveaways</title>
+        <title>PocketComps | Skill-based Competitions</title>
         <meta name="description" content="Win amazing prizes by answering trivia questions. No luck, just skill!" />
       </Head>
 
