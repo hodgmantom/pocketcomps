@@ -3,11 +3,23 @@ import AdminLayout from '@/components/AdminLayout';
 import AdminHeader from '@/components/AdminHeader';
 import Link from 'next/link';
 
+// ✅ Define a proper Competition type
+type Competition = {
+  title: string;
+  image: string;
+  question: string;
+  answers: string[];
+  correctAnswer: string;
+  tickets: number;
+  price: number;
+  drawDate: string;
+};
+
 export default function DashboardPage() {
-  const [competitions, setCompetitions] = useState<any[]>([]);
+  const [competitions, setCompetitions] = useState<Competition[]>([]);
 
   useEffect(() => {
-    const saved = JSON.parse(localStorage.getItem('competitions') || '[]');
+    const saved: Competition[] = JSON.parse(localStorage.getItem('competitions') || '[]');
     setCompetitions(saved);
   }, []);
 
@@ -21,24 +33,37 @@ export default function DashboardPage() {
   };
 
   const isFinished = (drawDate: string) => {
-    const today = new Date();
+    const now = new Date();
     const draw = new Date(drawDate);
-    return draw <= today;
+    return draw <= now;
   };
 
-  const totalValue = competitions.reduce((sum, comp) => sum + Number(comp.price || 0), 0);
-  const liveCount = competitions.filter((comp) => !isFinished(comp.drawDate)).length;
-  const finishedCount = competitions.length - liveCount;
+  const totalComps = competitions.length;
+  const totalValue = competitions.reduce((acc, comp) => acc + comp.price, 0);
+  const finishedCount = competitions.filter(c => isFinished(c.drawDate)).length;
+  const liveCount = totalComps - finishedCount;
 
   return (
     <AdminLayout>
       <AdminHeader title="Admin Dashboard" subtitle="Manage your competitions below." />
 
-      <div style={styles.statsContainer}>
-        <div style={styles.statBox}><h3 style={styles.statNumber}>{competitions.length}</h3><p style={styles.statLabel}>Total Competitions</p></div>
-        <div style={styles.statBox}><h3 style={styles.statNumber}>{liveCount}</h3><p style={styles.statLabel}>Live Competitions</p></div>
-        <div style={styles.statBox}><h3 style={styles.statNumber}>{finishedCount}</h3><p style={styles.statLabel}>Finished Competitions</p></div>
-        <div style={styles.statBox}><h3 style={styles.statNumber}>£{totalValue.toFixed(2)}</h3><p style={styles.statLabel}>Total Estimated Value</p></div>
+      <div style={styles.statsRow}>
+        <div style={styles.statCard}>
+          <h3>Total Competitions</h3>
+          <p>{totalComps}</p>
+        </div>
+        <div style={styles.statCard}>
+          <h3>Live</h3>
+          <p>{liveCount}</p>
+        </div>
+        <div style={styles.statCard}>
+          <h3>Finished</h3>
+          <p>{finishedCount}</p>
+        </div>
+        <div style={styles.statCard}>
+          <h3>Total Value (£)</h3>
+          <p>£{totalValue}</p>
+        </div>
       </div>
 
       <div style={styles.buttonRow}>
@@ -88,28 +113,18 @@ export default function DashboardPage() {
 }
 
 const styles = {
-  statsContainer: {
+  statsRow: {
     display: 'grid',
-    gridTemplateColumns: 'repeat(auto-fit, minmax(180px, 1fr))',
+    gridTemplateColumns: 'repeat(auto-fit, minmax(150px, 1fr))',
     gap: '1rem',
     marginBottom: '2rem',
   },
-  statBox: {
+  statCard: {
     backgroundColor: '#fff',
-    borderRadius: '12px',
-    padding: '1.25rem',
-    boxShadow: '0 2px 10px rgba(0,0,0,0.05)',
+    padding: '1rem',
+    borderRadius: '8px',
     textAlign: 'center' as const,
-  },
-  statNumber: {
-    fontSize: '2rem',
-    margin: 0,
-    color: '#1f2937',
-  },
-  statLabel: {
-    fontSize: '0.95rem',
-    color: '#6b7280',
-    marginTop: '0.25rem',
+    boxShadow: '0 2px 8px rgba(0,0,0,0.05)',
   },
   list: {
     listStyle: 'none',
