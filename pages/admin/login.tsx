@@ -11,7 +11,7 @@ export default function AdminLogin() {
     e.preventDefault();
 
     const correctUsername = 'admin';
-    const correctPassword = 'Lolarose2019&';
+    const correctPassword = 'admin';
 
     if (username === correctUsername && password === correctPassword) {
       localStorage.setItem('admin-auth', 'true');
