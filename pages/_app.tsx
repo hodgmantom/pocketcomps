@@ -8,7 +8,7 @@ export default function App({ Component, pageProps }: AppProps) {
     <>
       <Head>
         <title>PocketComps</title>
-        <link rel="icon" href="/favicon.ico" />
+        <link rel="icon" href="/favicon-v2.ico" />
       </Head>
       <Component {...pageProps} />
     </>
